@@ -10,9 +10,7 @@ const Index = () => {
         description='Forums for the Mythic Minecraft community.'
         url='/'
       />
-      <Layout>
-        <h2>mYtHiCC fOrUMs v3</h2>
-      </Layout>
+      <Layout />
     </React.StrictMode>
   )
 }
