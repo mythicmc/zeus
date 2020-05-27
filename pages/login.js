@@ -3,11 +3,17 @@ import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
 import Title from '../imports/title'
 import Layout from '../imports/layout'
+import useAuthentication from '../imports/useAuthentication'
 import { ip } from '../config.json'
 
+// TODO: Support registering accounts.
 const Login = () => {
   const router = useRouter()
   const passwordInput = useRef()
+  const authenticated = useAuthentication()
+  if (authenticated) {
+    router.back()
+  }
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
