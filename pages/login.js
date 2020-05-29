@@ -45,7 +45,7 @@ const Login = () => {
     <React.StrictMode>
       <Title
         title='Log In - Mythic'
-        description=' Login page for the Mythic forums.'
+        description='Login page for the Mythic forums.'
         url='/'
       />
       <Layout>
