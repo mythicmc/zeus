@@ -22,7 +22,7 @@ const Forums = (props) => {
 
   /*
   useEffect(() => {
-    if (authenticated && data && (data.status === 403 || data.status === 401) ) revalidate()
+    if (authenticated && data && (data.status === 403 || data.status === 401)) revalidate()
   }, [authenticated, data, revalidate])
   */
 

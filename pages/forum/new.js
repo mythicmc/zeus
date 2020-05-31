@@ -107,8 +107,10 @@ const NewForum = () => {
             Create
           </button>
         </form>
-        {statusCode === 401 && <p>Unauthorized!</p>}
-        {statusCode !== 200 && statusCode !== 401 && <p>An unknown error occurred while trying to request.</p>}
+        {(statusCode === 401 || statusCode === 403) && <p>Unauthorized!</p>}
+        {statusCode === 409 && <p>A forum with the slug specified already exists!</p>}
+        {statusCode !== 200 && statusCode === 401 && statusCode !== 403 && statusCode !== 409 &&
+          <p>An unknown error occurred while trying to request.</p>}
         {invalidSlug && <p>Only a-z, 0-9 and underscores (_) are allowed in the forum slug!</p>}
       </Layout>
     </React.StrictMode>

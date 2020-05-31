@@ -4,23 +4,22 @@ import { ip } from '../config.json'
 import { useState, useEffect } from 'react'
 
 /**
- * @return {null|boolean} True if authenticated, null if uncertain, false if not.
+ * @return {null|boolean|object} The member if authenticated, null if uncertain, false if not.
  */
 const useAuthentication = () => {
   const [authenticated, setAuthenticated] = useState(null)
 
-  // TODO: Wait for self-member endpoint to get data about the member instead of returning true.
   let accessToken
   const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
-    return ip + '/api/forums'
+    return ip + '/api/member/@me'
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
-  }))
+  }).then(e => e.status !== 200 ? { status: e.status } : e.json()))
 
   useEffect(() => {
     (async () => {
-      if (data && data.status === 200) setAuthenticated(true)
+      if (data && !data.status && data.id) setAuthenticated(data)
       else if (data && (data.status === 401 || data.status === 403)) {
         let refreshToken
         try { refreshToken = localStorage.getItem('refreshToken') } catch (e) { return }
