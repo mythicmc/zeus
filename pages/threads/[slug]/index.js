@@ -37,8 +37,8 @@ const Threads = (props) => {
   return (
     <React.StrictMode>
       <Title
-        title={`${data.forum ? data.forum.name : 'Forums'} - Mythic`}
-        description={data.forum ? data.forum.description : 'Loading...'}
+        title={`${data && data.forum ? data.forum.name : 'Forums'} - Mythic`}
+        description={data && data.forum ? data.forum.description : 'Loading...'}
         url={`/threads/${slug}`}
       />
       <Layout>
