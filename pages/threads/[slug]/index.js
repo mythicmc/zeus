@@ -14,9 +14,6 @@ import { ip } from '../../../config.json'
  * @param {string} title The title of the thread to convert to a slug.
  */
 const titleToSlug = title => title.toLowerCase().substring(0, 20).replace(' ', '-')
-const fetcher = (url) => fetch(url, {
-  headers: { authorization: localStorage.getItem('accessToken') }
-}).then(e => e.status === 200 ? e.json() : { status: e.status })
 
 // TODO: Show the new thread button when perms are available, also SSR.
 const Threads = (props) => {
@@ -31,38 +28,31 @@ const Threads = (props) => {
     return ip + `/api/forum/${slug}/threads`
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
-  }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.threads })
-
-  // Fetch the forum as well.
-  // TODO: Wait on backend to merge these requests.
-  const { data: forum, revalidate: revalidateForum } = useSWR(() => (
-    (!slug || !accessToken) ? undefined : ip + `/api/forum/${slug}`
-  ), fetcher, { initialData: props.forum })
+  }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.data })
 
   useEffect(() => {
     if (authenticated && data && (data.status === 403 || data.status === 401)) revalidate()
-    if (authenticated && forum && (forum.status === 403 || forum.status === 401)) revalidateForum()
-  }, [authenticated, data, revalidate, forum, revalidateForum])
+  }, [authenticated, data, revalidate])
 
   return (
     <React.StrictMode>
       <Title
-        title={`${forum ? forum.name : 'Forums'} - Mythic`}
-        description={forum ? forum.description : 'Loading...'}
+        title={`${data.forum ? data.forum.name : 'Forums'} - Mythic`}
+        description={data.forum ? data.forum.description : 'Loading...'}
         url={`/threads/${slug}`}
       />
       <Layout>
-        {Array.isArray(data) && data.length > 0 && data.map(thread => (
+        {data && Array.isArray(data.threads) && data.threads.length > 0 && data.threads.map(thread => (
           <div key={thread.id}>
             <AnchorLink href='/thread/[id]' as={`/thread/${thread.id}-${titleToSlug(thread.title)}`}>
               <span style={{ color: 'blue' }}>{thread.title}</span>
             </AnchorLink>
             <br />
-            <span>Author: {thread.ownerId} | Created On: {new Date(thread.createdOn).toString()}</span>
+            <span>Author: {thread.authorId} | Created On: {new Date(thread.createdOn).toString()}</span>
             <hr />
           </div>
         ))}
-        {Array.isArray(data) && data.length === 0 && (
+        {data && Array.isArray(data.threads) && data.threads.length === 0 && (
           <>
             <p>Looks like there&apos;s no thread here (yet).</p>
             <AnchorLink href='/threads/[slug]/new' as={`/threads/${slug}/new`}>
@@ -80,21 +70,17 @@ const Threads = (props) => {
 }
 
 Threads.propTypes = {
-  threads: PropTypes.array,
-  forum: PropTypes.object,
+  data: PropTypes.object,
   slug: PropTypes.string
 }
 
 /*
 export async function getServerSideProps (context) {
   const slug = context.params.slug // Remove !slug checks from main code.
-  const request = await Promise.all([
-    fetch(ip + `/api/forum/${slug}/threads`),
-    fetch(ip + `/api/forum/${slug}`)
-  ])
+  const request = await fetch(ip + `/api/forum/${slug}/threads`)
   // Error handling.
-  const response = await Promise.all(request.map(e => e.json()))
-  return { props: { threads: response[0], forum: response[1], slug } }
+  const response = await request.json()
+  return { props: { data: response, slug } }
 }
 */
 

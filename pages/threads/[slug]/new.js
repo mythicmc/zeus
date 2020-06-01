@@ -69,12 +69,12 @@ const NewThread = (props) => {
       <React.StrictMode>
         <Title
           title='Create New Thread - Mythic'
-          description={`Create a new thread in ${data.name || 'the Mythic forums'}.`}
+          description='Create a new thread in the Mythic forums.'
           url={`/threads/${router.query.slug}/new`}
         />
         <Layout>
           {(authenticated === null || !data) && <span>Loading...</span>}
-          {data.status && data.status !== 401 && data.status !== 403 &&
+          {data && data.status && data.status !== 401 && data.status !== 403 &&
             <span>An unknown error occurred while trying to request.</span>}
           {data && (data.status === 403 || data.status === 401) &&
             <span>You are not logged in to create a thread!</span>}

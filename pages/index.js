@@ -15,10 +15,14 @@ const Index = () => {
         url='/'
       />
       <Layout>
-        Logged in status: {JSON.stringify(authentication)}
+        Logged in status: {JSON.stringify(authentication, null, 1)}
         <br />
         <AnchorLink href='/forums'>
           <span style={{ color: 'blue' }}>View forums.</span>
+        </AnchorLink>
+        <br />
+        <AnchorLink href='/members'>
+          <span style={{ color: 'blue' }}>View a list of members.</span>
         </AnchorLink>
       </Layout>
     </React.StrictMode>
