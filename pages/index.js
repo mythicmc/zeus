@@ -24,6 +24,10 @@ const Index = () => {
         <AnchorLink href='/members'>
           <span style={{ color: 'blue' }}>View a list of members.</span>
         </AnchorLink>
+        <br />
+        <AnchorLink href='/changepassword'>
+          <span style={{ color: 'blue' }}>Change your password.</span>
+        </AnchorLink>
       </Layout>
     </React.StrictMode>
   )

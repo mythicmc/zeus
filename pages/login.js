@@ -32,7 +32,7 @@ const Login = () => {
         const result = await request.json()
         localStorage.setItem('accessToken', result.accessToken)
         localStorage.setItem('refreshToken', result.refreshToken)
-        router.push('/')
+        router.push(router.query.redirect || '/')
       } else setStatusCode(request.status)
     } catch (e) {
       setStatusCode(null)
