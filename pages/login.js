@@ -3,10 +3,10 @@ import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
 import Title from '../imports/title'
 import Layout from '../imports/layout'
+import AnchorLink from '../imports/anchorLink'
 import useAuthentication from '../imports/useAuthentication'
 import { ip } from '../config.json'
 
-// TODO: Support registering accounts.
 const Login = () => {
   const router = useRouter()
   const passwordInput = useRef()
@@ -46,7 +46,7 @@ const Login = () => {
       <Title
         title='Log In - Mythic'
         description='Login page for the Mythic forums.'
-        url='/'
+        url='/login'
       />
       <Layout>
         <form onSubmit={e => e.preventDefault()}>
@@ -88,6 +88,11 @@ const Login = () => {
         </form>
         {statusCode === 401 && <p>Unauthorized!</p>}
         {statusCode !== 200 && statusCode !== 401 && <p>An unknown error occurred while trying to request.</p>}
+        <p>Don&apos;t have an account?
+          <AnchorLink href='/register'>
+            <span style={{ color: 'blue' }}> Register</span>
+          </AnchorLink>
+        </p>
       </Layout>
     </React.StrictMode>
   )

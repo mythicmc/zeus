@@ -111,7 +111,7 @@ const NewForum = () => {
         {statusCode === 409 && <p>A forum with the slug specified already exists!</p>}
         {statusCode !== 200 && statusCode === 401 && statusCode !== 403 && statusCode !== 409 &&
           <p>An unknown error occurred while trying to request.</p>}
-        {invalidSlug && <p>Only a-z, 0-9 and underscores (_) are allowed in the forum slug!</p>}
+        {invalidSlug && <p>Only a-z, 0-9, dashes (-) and underscores (_) are allowed in the forum slug!</p>}
       </Layout>
     </React.StrictMode>
   )
