@@ -5,7 +5,7 @@ import AnchorLink from '../imports/anchorLink'
 import useAuthentication from '../imports/useAuthentication'
 
 const Index = () => {
-  const authentication = useAuthentication()
+  const authenticated = useAuthentication()
 
   return (
     <React.StrictMode>
@@ -14,8 +14,8 @@ const Index = () => {
         description='Forums for the Mythic Minecraft community.'
         url='/'
       />
-      <Layout>
-        Logged in status: {JSON.stringify(authentication, null, 1)}
+      <Layout auth={authenticated}>
+        Logged in status: {JSON.stringify(authenticated, null, 1)}
         <br />
         <AnchorLink href='/forums'>
           <span style={{ color: 'blue' }}>View forums.</span>

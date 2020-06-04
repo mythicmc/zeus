@@ -72,7 +72,7 @@ const NewThread = (props) => {
           description='Create a new thread in the Mythic forums.'
           url={`/threads/${router.query.slug}/new`}
         />
-        <Layout>
+        <Layout auth={authenticated}>
           {(authenticated === null || !data) && <span>Loading...</span>}
           {data && data.status && data.status !== 401 && data.status !== 403 &&
             <span>An unknown error occurred while trying to request.</span>}
@@ -89,7 +89,7 @@ const NewThread = (props) => {
         description={`Create a new thread in ${data.name}.`}
         url={`/threads/${router.query.slug}/new`}
       />
-      <Layout>
+      <Layout auth={authenticated}>
         <h2>Create New Thread in {data.name}</h2>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='title'>Title: </label>

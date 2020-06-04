@@ -44,7 +44,7 @@ const ChangePassword = () => {
           description='Page to change your password on the Mythic forums.'
           url='/changepassword'
         />
-        <Layout>
+        <Layout auth={authenticated}>
           {authenticated === null
             ? <p>Loading...</p>
             : <p>You are not logged in!</p>}
@@ -59,7 +59,7 @@ const ChangePassword = () => {
         description='Page to change your password on the Mythic forums.'
         url='/changepassword'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='password'>Password: </label>
           <input

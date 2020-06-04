@@ -1,7 +1,7 @@
 import React from 'react'
 import Document, { Head, Main, NextScript } from 'next/document'
 
-const icon = '/static/widgets.png'
+const icon = '/assets/icon.png'
 
 class MyDocument extends Document {
   render () {
@@ -17,7 +17,7 @@ class MyDocument extends Document {
             minimum-scale=1, width=device-width, height=device-height'
           />
           {/* PWA primary color */}
-          <meta name='theme-color' content='#fff' />
+          <meta name='theme-color' content='#34644c' />
           {/* Open Graph Protocol support. */}
           <meta property='og:type' content='website' />
           <meta property='og:image' content={icon} /> {/* TODO: Need to check. */}

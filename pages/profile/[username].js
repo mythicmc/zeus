@@ -34,7 +34,7 @@ const Profile = (props) => {
         description={data ? `Profile of member of user ${data.name}.` : 'Loading...'}
         url={`/profile/${username}`}
       />
-      <Layout>
+      <Layout auth={authenticated}>
         {data && !data.status && (
           <>
             <p>Username: {data.name}</p>

@@ -31,7 +31,7 @@ const Members = (props) => {
         description='All members of the Mythic Minecraft community.'
         url='/members'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         {Array.isArray(data) && data.map(member => (
           <div key={member.name}>
             <AnchorLink href='/profile/[username]' as={`/profile/${member.name}`}>

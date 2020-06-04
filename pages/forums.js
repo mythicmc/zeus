@@ -5,12 +5,12 @@ import useSWR from 'swr'
 import Title from '../imports/title'
 import Layout from '../imports/layout'
 import AnchorLink from '../imports/anchorLink'
-// import useAuthentication from '../imports/useAuthentication'
+import useAuthentication from '../imports/useAuthentication'
 import { ip } from '../config.json'
 
 // TODO: Show the new forum button when perms are available, also SSR.
 const Forums = (props) => {
-  // const authenticated = useAuthentication()
+  const authenticated = useAuthentication()
 
   let accessToken
   const { data } = useSWR(() => {
@@ -33,7 +33,7 @@ const Forums = (props) => {
         description='Forums for the Mythic Minecraft community.'
         url='/forums'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         {Array.isArray(data) && data.map(forum => (
           <div key={forum.slug}>
             <AnchorLink href='/threads/[slug]' as={`/threads/${forum.slug}`}>

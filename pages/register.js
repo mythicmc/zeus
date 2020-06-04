@@ -53,7 +53,7 @@ const Register = () => {
         description='Register an account on the Mythic forums.'
         url='/register'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='username'>Username: </label>
           <input

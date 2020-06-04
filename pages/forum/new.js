@@ -53,7 +53,7 @@ const NewForum = () => {
           description='Create a new forum category.'
           url='/forum/new'
         />
-        <Layout>
+        <Layout auth={authenticated}>
           <span>You are not permitted to visit this area!</span>
         </Layout>
       </React.StrictMode>
@@ -66,7 +66,7 @@ const NewForum = () => {
         description='Create a new forum category.'
         url='/forum/new'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         <h2>Create New Forum</h2>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='name'>Name: </label>

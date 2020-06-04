@@ -41,7 +41,7 @@ const Threads = (props) => {
         description={data && data.forum ? data.forum.description : 'Loading...'}
         url={`/threads/${slug}`}
       />
-      <Layout>
+      <Layout auth={authenticated}>
         {data && Array.isArray(data.threads) && data.threads.length > 0 && data.threads.map(thread => (
           <div key={thread.id}>
             <AnchorLink href='/thread/[id]' as={`/thread/${thread.id}-${titleToSlug(thread.title)}`}>

@@ -48,7 +48,7 @@ const Login = () => {
         description='Login page for the Mythic forums.'
         url='/login'
       />
-      <Layout>
+      <Layout auth={authenticated}>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='username'>Username: </label>
           <input

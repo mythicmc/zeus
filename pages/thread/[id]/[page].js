@@ -75,7 +75,7 @@ const Thread = (props) => {
         description={data && data.posts ? data.posts[0].content.substring(0, 100) + '...' : 'Loading...'}
         url={`/thread/${id}`}
       />
-      <Layout>
+      <Layout auth={authenticated}>
         {data && data.thread && <h2>{data.thread.title}</h2>}
         {data && Array.isArray(data.posts) && (
           <>
