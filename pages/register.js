@@ -33,8 +33,8 @@ const Register = () => {
       setFetching(true)
       const request = await fetch(ip + '/register', {
         method: 'POST',
-        body: JSON.stringify({ email }),
-        headers: { username, password, 'content-type': 'application/json' }
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, username, password, ip: '' })
       })
       if (request.status === 200) {
         router.push('/login')

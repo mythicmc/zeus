@@ -14,7 +14,7 @@ import { ip } from '../../../config.json'
  */
 const titleToSlug = title => title.toLowerCase().substring(0, 20).replace(' ', '-')
 
-// TODO: /page-number, BBCode parsing and SSR.
+// TODO: /page-number and BBCode parsing.
 const Thread = (props) => {
   const router = useRouter()
   const authenticated = useAuthentication()
@@ -27,8 +27,7 @@ const Thread = (props) => {
   let accessToken
   const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
-    if (!id) return
-    return ip + `/api/thread/${id.split('-')[0]}`
+    return ip + `/public/thread/${id.split('-')[0]}`
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.data })
@@ -89,8 +88,12 @@ const Thread = (props) => {
                 <hr />
               </div>
             ))}
-            <textarea value={replyContent} onChange={e => setReplyContent(e.target.value)} />
-            <button onClick={handleReply}>Reply</button>
+            {authenticated && (
+              <>
+                <textarea value={replyContent} onChange={e => setReplyContent(e.target.value)} />
+                <button onClick={handleReply}>Reply</button>
+              </>
+            )}
             {fetching && <p>Replying...</p>}
             {(statusCode === 403 || statusCode === 401)
               ? <p>You cannot reply to this thread!</p>
@@ -111,14 +114,17 @@ Thread.propTypes = {
   id: PropTypes.string
 }
 
-/*
 export async function getServerSideProps (context) {
-  const id = context.params.id // Remove !id checks from main code.
-  const request = await fetch(ip + `/api/thread/${id}`)
-  // Error handling.
-  const response = await request.json()
-  return { props: { data: response, id } }
+  const id = context.params.id
+  try {
+    const request = await fetch(ip + `/public/thread/${id}`)
+    if (!request.ok) return { props: { forums: null, id } }
+    const response = await request.json()
+    return { props: { forums: response, id } }
+  } catch (e) {
+    console.error(e)
+    return { props: { forums: null, id } }
+  }
 }
-*/
 
 export default Thread

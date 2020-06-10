@@ -8,14 +8,13 @@ import AnchorLink from '../imports/anchorLink'
 import useAuthentication from '../imports/useAuthentication'
 import { ip } from '../config.json'
 
-// TODO: SSR.
 const Members = (props) => {
   const authenticated = useAuthentication()
 
   let accessToken
   const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
-    return ip + '/api/members'
+    return ip + '/public/members'
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.members })
@@ -55,13 +54,16 @@ Members.propTypes = {
   members: PropTypes.array
 }
 
-/*
 export async function getServerSideProps (context) {
-  const request = await fetch(ip + '/api/members')
-  // Error handling.
-  const response = await request.json()
-  return { props: { members: response } }
+  try {
+    const request = await fetch(ip + '/public/members')
+    if (!request.ok) return { props: { members: null } }
+    const response = await request.json()
+    return { props: { members: response } }
+  } catch (e) {
+    console.error(e)
+    return { props: { members: null } }
+  }
 }
-*/
 
 export default Members

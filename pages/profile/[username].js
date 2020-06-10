@@ -8,7 +8,7 @@ import Layout from '../../imports/layout'
 import useAuthentication from '../../imports/useAuthentication'
 import { ip } from '../../config.json'
 
-// TODO: More info (post count, recent posts, etc), data like avatar, role, email, IP and SSR.
+// TODO: More info (post count, recent posts, etc), data like avatar, role, email, IP.
 const Profile = (props) => {
   const router = useRouter()
   const authenticated = useAuthentication()
@@ -17,8 +17,7 @@ const Profile = (props) => {
   let accessToken
   const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
-    if (!username) return
-    return ip + `/api/member/${username}`
+    return ip + `/public/member/${username}`
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.member })
@@ -30,8 +29,8 @@ const Profile = (props) => {
   return (
     <React.StrictMode>
       <Title
-        title={`${data ? data.name : 'Member Profile'} - Mythic`}
-        description={data ? `Profile of member of user ${data.name}.` : 'Loading...'}
+        title={`${username || 'Member Profile'} - Mythic`}
+        description={username ? `Profile of member of user ${username}.` : 'Loading...'}
         url={`/profile/${username}`}
       />
       <Layout auth={authenticated}>
@@ -56,14 +55,17 @@ Profile.propTypes = {
   member: PropTypes.object
 }
 
-/*
 export async function getServerSideProps (context) {
-  const username = context.params.username // Remove !username checks from main code.
-  const request = await fetch(ip + `/api/member/${username}`)
-  // Error handling.
-  const response = await request.json()
-  return { props: { username: response, member } }
+  const username = context.params.username
+  try {
+    const request = await fetch(ip + `/public/member/${username}`)
+    if (!request.ok) return { props: { member: null, username } }
+    const response = await request.json()
+    return { props: { member: response, username } }
+  } catch (e) {
+    console.error(e)
+    return { props: { member: null, username } }
+  }
 }
-*/
 
 export default Profile

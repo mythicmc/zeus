@@ -15,7 +15,7 @@ import { ip } from '../../../config.json'
  */
 const titleToSlug = title => title.toLowerCase().substring(0, 20).replace(' ', '-')
 
-// TODO: Show the new thread button when perms are available, also SSR.
+// TODO: Show the new thread button when perms are available.
 const Threads = (props) => {
   const router = useRouter()
   const authenticated = useAuthentication()
@@ -24,8 +24,7 @@ const Threads = (props) => {
   let accessToken
   const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
-    if (!slug) return
-    return ip + `/api/forum/${slug}/threads`
+    return ip + `/public/forum/${slug}/threads`
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.data })
@@ -74,14 +73,17 @@ Threads.propTypes = {
   slug: PropTypes.string
 }
 
-/*
 export async function getServerSideProps (context) {
-  const slug = context.params.slug // Remove !slug checks from main code.
-  const request = await fetch(ip + `/api/forum/${slug}/threads`)
-  // Error handling.
-  const response = await request.json()
-  return { props: { data: response, slug } }
+  const slug = context.params.slug
+  try {
+    const request = await fetch(ip + `/public/forum/${slug}/threads`, { headers: { authorization: '' } })
+    if (!request.ok) return { props: { data: null, slug } }
+    const response = await request.json()
+    return { props: { data: response, slug } }
+  } catch (e) {
+    console.error(e)
+    return { props: { data: null, slug } }
+  }
 }
-*/
 
 export default Threads
