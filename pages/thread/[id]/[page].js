@@ -102,7 +102,8 @@ const Thread = (props) => {
         )}
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 &&
+        {data && data.status === 404 && <p>This thread does not exist!</p>}
+        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
           <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
@@ -117,13 +118,16 @@ Thread.propTypes = {
 export async function getServerSideProps (context) {
   const id = context.params.id
   try {
-    const request = await fetch(ip + `/public/thread/${id}`)
-    if (!request.ok) return { props: { forums: null, id } }
+    const request = await fetch(ip + `/public/thread/${id.split('-')[0]}`)
+    if (request.status === 404) {
+      context.res.statusCode = 404
+      return { props: { data: { status: 404 }, id } }
+    } else if (!request.ok) return { props: { data: null, id } }
     const response = await request.json()
-    return { props: { forums: response, id } }
+    return { props: { data: response, id } }
   } catch (e) {
     console.error(e)
-    return { props: { forums: null, id } }
+    return { props: { data: null, id } }
   }
 }
 

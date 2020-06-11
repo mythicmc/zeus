@@ -29,8 +29,8 @@ const Profile = (props) => {
   return (
     <React.StrictMode>
       <Title
-        title={`${username || 'Member Profile'} - Mythic`}
-        description={username ? `Profile of member of user ${username}.` : 'Loading...'}
+        title={`${data.name || 'Member Profile'} - Mythic`}
+        description={data.name ? `Profile of member ${data.name}.` : 'Loading...'}
         url={`/profile/${username}`}
       />
       <Layout auth={authenticated}>
@@ -43,7 +43,8 @@ const Profile = (props) => {
         )}
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 &&
+        {data && data.status === 404 && <p>No member exists with this username!</p>}
+        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
           <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
@@ -59,7 +60,10 @@ export async function getServerSideProps (context) {
   const username = context.params.username
   try {
     const request = await fetch(ip + `/public/member/${username}`)
-    if (!request.ok) return { props: { member: null, username } }
+    if (request.status === 404) {
+      context.res.statusCode = 404
+      return { props: { member: { status: 404 }, username } }
+    } else if (!request.ok) return { props: { member: null, username } }
     const response = await request.json()
     return { props: { member: response, username } }
   } catch (e) {

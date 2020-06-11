@@ -61,7 +61,8 @@ const Threads = (props) => {
         )}
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 &&
+        {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
+        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
           <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
@@ -77,7 +78,10 @@ export async function getServerSideProps (context) {
   const slug = context.params.slug
   try {
     const request = await fetch(ip + `/public/forum/${slug}/threads`, { headers: { authorization: '' } })
-    if (!request.ok) return { props: { data: null, slug } }
+    if (request.status === 404) {
+      context.res.statusCode = 404
+      return { props: { data: { status: 404 }, slug } }
+    } else if (!request.ok) return { props: { data: null, slug } }
     const response = await request.json()
     return { props: { data: response, slug } }
   } catch (e) {

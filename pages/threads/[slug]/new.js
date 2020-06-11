@@ -74,8 +74,9 @@ const NewThread = (props) => {
         />
         <Layout auth={authenticated}>
           {(authenticated === null || !data) && <span>Loading...</span>}
-          {data && data.status && data.status !== 401 && data.status !== 403 &&
+          {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
             <span>An unknown error occurred while trying to request.</span>}
+          {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
           {data && (data.status === 403 || data.status === 401) &&
             <span>You are not logged in to create a thread!</span>}
         </Layout>
