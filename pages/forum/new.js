@@ -49,6 +49,7 @@ const NewForum = () => {
     return (
       <React.StrictMode>
         <Title
+          noIndex
           title='Create New Forum - Mythic'
           description='Create a new forum category.'
           url='/forum/new'
@@ -62,6 +63,7 @@ const NewForum = () => {
   return (
     <React.StrictMode>
       <Title
+        noIndex
         title='Create New Forum - Mythic'
         description='Create a new forum category.'
         url='/forum/new'

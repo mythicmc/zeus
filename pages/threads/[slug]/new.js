@@ -68,6 +68,7 @@ const NewThread = (props) => {
     return (
       <React.StrictMode>
         <Title
+          noIndex
           title='Create New Thread - Mythic'
           description='Create a new thread in the Mythic forums.'
           url={`/threads/${router.query.slug}/new`}
@@ -86,6 +87,7 @@ const NewThread = (props) => {
   return (
     <React.StrictMode>
       <Title
+        noIndex
         title='Create New Thread - Mythic'
         description={`Create a new thread in ${data.name}.`}
         url={`/threads/${router.query.slug}/new`}

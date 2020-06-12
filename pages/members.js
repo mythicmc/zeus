@@ -20,8 +20,8 @@ const Members = (props) => {
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.members })
 
   useEffect(() => {
-    if (authenticated && data && (data.status === 403 || data.status === 401)) revalidate()
-  }, [authenticated, data, revalidate])
+    if (authenticated) revalidate()
+  }, [authenticated, revalidate])
 
   return (
     <React.StrictMode>

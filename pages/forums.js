@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import fetch from 'isomorphic-unfetch'
 import useSWR from 'swr'
@@ -13,18 +13,16 @@ const Forums = (props) => {
   const authenticated = useAuthentication()
 
   let accessToken
-  const { data } = useSWR(() => {
+  const { data, revalidate } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + '/public/forums'
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.forums })
 
-  /*
   useEffect(() => {
-    if (authenticated && data && (data.status === 403 || data.status === 401)) revalidate()
-  }, [authenticated, data, revalidate])
-  */
+    if (authenticated) revalidate()
+  }, [authenticated, revalidate])
 
   return (
     <React.StrictMode>
@@ -45,9 +43,7 @@ const Forums = (props) => {
           </div>
         ))}
         {!data && <p>Loading...</p>}
-        {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 &&
-          <p>An unknown error occurred.</p>}
+        {data && data.status && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )

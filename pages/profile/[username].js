@@ -23,8 +23,8 @@ const Profile = (props) => {
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.member })
 
   useEffect(() => {
-    if (authenticated && data && (data.status === 403 || data.status === 401)) revalidate()
-  }, [authenticated, data, revalidate])
+    if (authenticated) revalidate()
+  }, [authenticated, revalidate])
 
   return (
     <React.StrictMode>
@@ -42,10 +42,8 @@ const Profile = (props) => {
           </>
         )}
         {!data && <p>Loading...</p>}
-        {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
         {data && data.status === 404 && <p>No member exists with this username!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
-          <p>An unknown error occurred.</p>}
+        {data && data.status && data.status !== 404 && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )
