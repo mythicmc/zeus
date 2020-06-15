@@ -15,7 +15,7 @@ const Profile = (props) => {
   const username = props.username || router.query.username
 
   let accessToken
-  const { data, revalidate } = useSWR(() => {
+  const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + `/public/member/${username}`
   }, (url) => fetch(url, {
@@ -43,7 +43,7 @@ const Profile = (props) => {
         )}
         {!data && <p>Loading...</p>}
         {data && data.status === 404 && <p>No member exists with this username!</p>}
-        {data && data.status && data.status !== 404 && <p>An unknown error occurred.</p>}
+        {((data && data.status && data.status !== 404) || error) && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )

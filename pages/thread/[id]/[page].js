@@ -25,7 +25,7 @@ const Thread = (props) => {
   const [replyContent, setReplyContent] = useState('')
 
   let accessToken
-  const { data, revalidate } = useSWR(() => {
+  const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + `/public/thread/${id.split('-')[0]}`
   }, (url) => fetch(url, {
@@ -79,7 +79,7 @@ const Thread = (props) => {
         {data && Array.isArray(data.posts) && (
           <>
             <hr />
-            {data.posts.map((post, index) => (
+            {data.posts.sort((a, b) => a.createdOn - b.createdOn).map((post, index) => (
               <div key={post.id}>
                 <a href={`#post-${post.id}`} id={`post-${post.id}`}>Post #{index + 1}</a>
                 <br /><br />
@@ -103,8 +103,8 @@ const Thread = (props) => {
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
         {data && data.status === 404 && <p>This thread does not exist!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
-          <p>An unknown error occurred.</p>}
+        {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
+          error) && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )

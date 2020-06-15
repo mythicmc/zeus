@@ -13,7 +13,7 @@ const Forums = (props) => {
   const authenticated = useAuthentication()
 
   let accessToken
-  const { data, revalidate } = useSWR(() => {
+  const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + '/public/forums'
   }, (url) => fetch(url, {
@@ -43,7 +43,7 @@ const Forums = (props) => {
           </div>
         ))}
         {!data && <p>Loading...</p>}
-        {data && data.status && <p>An unknown error occurred.</p>}
+        {((data && data.status) || error) && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )

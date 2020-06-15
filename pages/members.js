@@ -12,7 +12,7 @@ const Members = (props) => {
   const authenticated = useAuthentication()
 
   let accessToken
-  const { data, revalidate } = useSWR(() => {
+  const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + '/public/members'
   }, (url) => fetch(url, {
@@ -31,7 +31,7 @@ const Members = (props) => {
         url='/members'
       />
       <Layout auth={authenticated}>
-        {Array.isArray(data) && data.map(member => (
+        {Array.isArray(data) && data.sort((a, b) => a.name.localeCompare(b.name)).map(member => (
           <div key={member.name}>
             <AnchorLink href='/profile/[username]' as={`/profile/${member.name}`}>
               <span style={{ color: 'blue' }}>{member.name}</span>
@@ -43,7 +43,7 @@ const Members = (props) => {
         ))}
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 &&
+        {((data && data.status && data.status !== 401 && data.status !== 403) || error) &&
           <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>

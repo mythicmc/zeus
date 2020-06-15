@@ -22,7 +22,7 @@ const Threads = (props) => {
   const slug = props.slug || router.query.slug
 
   let accessToken
-  const { data, revalidate } = useSWR(() => {
+  const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     return ip + `/public/forum/${slug}/threads`
   }, (url) => fetch(url, {
@@ -41,7 +41,9 @@ const Threads = (props) => {
         url={`/threads/${slug}`}
       />
       <Layout auth={authenticated}>
-        {data && Array.isArray(data.threads) && data.threads.length > 0 && data.threads.map(thread => (
+        {data && Array.isArray(data.threads) && data.threads.length > 0 && data.threads.sort(
+          (a, b) => a.createdOn - b.createdOn
+        ).map(thread => (
           <div key={thread.id}>
             <AnchorLink href='/thread/[id]' as={`/thread/${thread.id}-${titleToSlug(thread.title)}`}>
               <span style={{ color: 'blue' }}>{thread.title}</span>
@@ -62,8 +64,8 @@ const Threads = (props) => {
         {!data && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
         {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
-        {data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404 &&
-          <p>An unknown error occurred.</p>}
+        {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
+          error) && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>
   )
