@@ -20,6 +20,8 @@ const NewThread = (props) => {
   const authenticated = useAuthentication()
 
   const [title, setTitle] = useState('')
+  const [pinned, setPinned] = useState(false)
+  const [closed, setClosed] = useState(false)
   const [content, setContent] = useState('')
   const [fetching, setFetching] = useState(false)
   const [statusCode, setStatusCode] = useState(200) // Expected values: 200, 403, 500
@@ -50,7 +52,7 @@ const NewThread = (props) => {
         method: 'POST',
         headers: { 'content-type': 'application/json', authorization },
         body: JSON.stringify(
-          { title, content, parentForumId: data.id }
+          { title, content, parentForumId: data.id, pinned, closed }
         )
       })
       if (request.status === 200) {
@@ -74,12 +76,12 @@ const NewThread = (props) => {
           url={`/threads/${router.query.slug}/new`}
         />
         <Layout auth={authenticated}>
-          {(authenticated === null || !data) && <span>Loading...</span>}
+          {(authenticated === null || (!data && !error)) && <span>Loading...</span>}
           {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
             error) && <span>An unknown error occurred while trying to request.</span>}
           {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
           {data && (data.status === 403 || data.status === 401) &&
-            <span>You are not logged in to create a thread!</span>}
+            <span>You are not allowed to view this sub-forum!</span>}
         </Layout>
       </React.StrictMode>
     )
@@ -116,6 +118,24 @@ const NewThread = (props) => {
             disabled={fetching}
             ref={contentInput}
             onChange={e => setContent(e.target.value)}
+          />
+          <br /><br />
+          <label htmlFor='pinned'>Pinned: </label>
+          <input
+            type='checkbox'
+            id='pinned'
+            value={pinned}
+            disabled={fetching}
+            onChange={e => setPinned(e.target.value)}
+          />
+          <br /><br />
+          <label htmlFor='closed'>Closed: </label>
+          <input
+            type='checkbox'
+            id='closed'
+            value={closed}
+            disabled={fetching}
+            onChange={e => setClosed(e.target.value)}
           />
           <br /><br />
           <button onClick={handleNewThread} disabled={fetching || !title || !content}>

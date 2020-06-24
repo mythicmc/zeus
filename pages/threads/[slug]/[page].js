@@ -61,7 +61,7 @@ const Threads = (props) => {
             </AnchorLink>
           </>
         )}
-        {!data && <p>Loading...</p>}
+        {!data && !error && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
         {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
         {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||

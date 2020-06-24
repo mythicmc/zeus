@@ -34,15 +34,21 @@ const Forums = (props) => {
       <Layout auth={authenticated}>
         {Array.isArray(data) && data.map(forum => (
           <div key={forum.slug}>
-            <AnchorLink href='/threads/[slug]' as={`/threads/${forum.slug}`}>
-              <span style={{ color: 'blue' }}>{forum.name}</span>
-            </AnchorLink>
+            <div style={{ display: 'inline-flex', width: '100%' }}>
+              <AnchorLink href='/threads/[slug]' as={`/threads/${forum.slug}`}>
+                <span style={{ color: 'blue' }}>{forum.name}</span>
+              </AnchorLink>
+              <div style={{ flex: 1 }} />
+              <AnchorLink href='/forum/[slug]/edit' as={`/forum/${forum.slug}/edit`}>
+                <span style={{ color: 'blue' }}>Edit</span>
+              </AnchorLink>
+            </div>
             <br />
             <span>{forum.description}</span>
             <hr />
           </div>
         ))}
-        {!data && <p>Loading...</p>}
+        {!data && !error && <p>Loading...</p>}
         {((data && data.status) || error) && <p>An unknown error occurred.</p>}
       </Layout>
     </React.StrictMode>

@@ -14,7 +14,7 @@ import { ip } from '../../../config.json'
  */
 const titleToSlug = title => title.toLowerCase().substring(0, 20).replace(' ', '-')
 
-// TODO: /page-number and BBCode parsing.
+// TODO: /page-number and BBCode parsing. Rich text editor.
 const Thread = (props) => {
   const router = useRouter()
   const authenticated = useAuthentication()
@@ -85,6 +85,11 @@ const Thread = (props) => {
                 <br /><br />
                 <span>Author: {post.authorId} | Created On: {new Date(post.createdOn).toString()}</span>
                 <p>{post.content}</p>
+                {!!post.lastEdit && (
+                  <div style={{ marginBottom: 10, padding: 2, border: '2px solid black' }}>
+                    Edited on {new Date(post.lastEdit).toString()} | Reason: {post.editReason}
+                  </div>
+                )}
                 <hr />
               </div>
             ))}
@@ -100,7 +105,7 @@ const Thread = (props) => {
               : statusCode !== null && <p>An unknown error occurred.</p>}
           </>
         )}
-        {!data && <p>Loading...</p>}
+        {!data && !error && <p>Loading...</p>}
         {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
         {data && data.status === 404 && <p>This thread does not exist!</p>}
         {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||

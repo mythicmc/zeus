@@ -1,13 +1,14 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import Title from '../../imports/title'
-import Layout from '../../imports/layout'
-import useAuthentication from '../../imports/useAuthentication'
-import { ip } from '../../config.json'
+import useSWR from 'swr'
+import Title from '../../../imports/title'
+import Layout from '../../../imports/layout'
+import useAuthentication from '../../../imports/useAuthentication'
+import { ip } from '../../../config.json'
 
-// TODO: Support icon, readable roles and writable roles. Check perms from useAuthentication AOT.
-const NewForum = () => {
+// TODO: Support icon, readable roles and writable roles.
+const EditForum = () => {
   const router = useRouter()
   const slugInput = useRef()
   const descriptionInput = useRef()
@@ -20,19 +21,36 @@ const NewForum = () => {
   const [statusCode, setStatusCode] = useState(200) // Expected values: 200, 403, 500
   const [invalidSlug, setInvalidSlug] = useState(false)
 
-  const handleNewForum = async () => {
+  let accessToken
+  const { data, revalidate, error } = useSWR(() => {
+    accessToken = localStorage.getItem('accessToken')
+    if (!router.query.slug) return
+    return ip + `/public/forum/${router.query.slug}`
+  }, (url) => fetch(url, {
+    headers: { authorization: accessToken }
+  }).then(e => e.status === 200 ? e.json() : { status: e.status }))
+
+  useEffect(() => {
+    if (authenticated) revalidate()
+  }, [authenticated, revalidate])
+  useEffect(() => {
+    if (!data || data.status) return
+    setName(data.name)
+    setSlug(data.slug)
+    setDescription(data.description)
+  }, [data])
+
+  const handleForumEdit = async () => {
     if (!name || !slug || !description) return
     setInvalidSlug(false)
     if (!slug.match(/^[a-z0-9_-]*$/)) return setInvalidSlug(true)
     try {
       setFetching(true)
       const authorization = localStorage.getItem('accessToken')
-      const request = await fetch(ip + '/api/forum', {
-        method: 'POST',
+      const request = await fetch(ip + '/api/forum/' + router.query.slug, {
+        method: 'PATCH',
         headers: { 'content-type': 'application/json', authorization },
-        body: JSON.stringify(
-          { name, slug, description, icon: '', readableRoleIds: [], writeableRoleIds: [] }
-        )
+        body: JSON.stringify({ name, slug, description })
       })
       if (request.status === 200) {
         router.push('/forums')
@@ -44,18 +62,23 @@ const NewForum = () => {
     setFetching(false)
   }
 
-  // Assume the user is forbidden, until authentication data is available.
-  if (!authenticated) {
+  if (!authenticated || !data || data.status || error) {
     return (
       <React.StrictMode>
         <Title
           noIndex
-          title='Create New Forum - Mythic'
-          description='Create a new forum category.'
-          url='/forum/new'
+          title='Edit Forum - Mythic'
+          description='Edit a forum category.'
+          url={`/forum/${slug}/edit`}
         />
         <Layout auth={authenticated}>
-          <span>You are not permitted to visit this area!</span>
+          {(authenticated === null || (!data && !error)) && <span>Loading...</span>}
+          {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
+            error) && authenticated !== null &&
+              <span>An unknown error occurred while trying to request.</span>}
+          {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
+          {data && (data.status === 403 || data.status === 401) &&
+            <span>You are not allowed to edit forums!</span>}
         </Layout>
       </React.StrictMode>
     )
@@ -64,12 +87,12 @@ const NewForum = () => {
     <React.StrictMode>
       <Title
         noIndex
-        title='Create New Forum - Mythic'
-        description='Create a new forum category.'
-        url='/forum/new'
+        title='Edit Forum - Mythic'
+        description='Edit a forum category.'
+        url={`/forum/${slug}/edit`}
       />
       <Layout auth={authenticated}>
-        <h2>Create New Forum</h2>
+        <h2>Edit Forum</h2>
         <form onSubmit={e => e.preventDefault()}>
           <label htmlFor='name'>Name: </label>
           <input
@@ -105,12 +128,11 @@ const NewForum = () => {
             onChange={e => setDescription(e.target.value)}
           />
           <br /><br />
-          <button onClick={handleNewForum} disabled={fetching || !name || !slug || !description}>
-            Create
+          <button onClick={handleForumEdit} disabled={fetching || !name || !slug || !description}>
+            Edit
           </button>
         </form>
-        {(statusCode === 401 || statusCode === 403) &&
-          <p>You are not allowed to create sub-forums!</p>}
+        {(statusCode === 401 || statusCode === 403) && <p>Unauthorized!</p>}
         {statusCode === 409 && <p>A forum with the slug specified already exists!</p>}
         {statusCode !== 200 && statusCode === 401 && statusCode !== 403 && statusCode !== 409 &&
           <p>An unknown error occurred while trying to request.</p>}
@@ -120,4 +142,4 @@ const NewForum = () => {
   )
 }
 
-export default NewForum
+export default EditForum
