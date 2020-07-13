@@ -78,7 +78,7 @@ const EditForum = () => {
               <span>An unknown error occurred while trying to request.</span>}
           {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
           {data && (data.status === 403 || data.status === 401) &&
-            <span>You are not allowed to edit forums!</span>}
+            <span>You are not allowed to view this sub-forum!</span>}
         </Layout>
       </React.StrictMode>
     )

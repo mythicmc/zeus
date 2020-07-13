@@ -39,9 +39,11 @@ const Forums = (props) => {
                 <span style={{ color: 'blue' }}>{forum.name}</span>
               </AnchorLink>
               <div style={{ flex: 1 }} />
-              <AnchorLink href='/forum/[slug]/edit' as={`/forum/${forum.slug}/edit`}>
-                <span style={{ color: 'blue' }}>Edit</span>
-              </AnchorLink>
+              {authenticated && (
+                <AnchorLink href='/forum/[slug]/edit' as={`/forum/${forum.slug}/edit`}>
+                  <span style={{ color: 'blue' }}>Edit</span>
+                </AnchorLink>
+              )}
             </div>
             <br />
             <span>{forum.description}</span>
