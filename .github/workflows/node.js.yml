@@ -37,5 +37,5 @@ jobs:
           ${{ runner.os }}-build-
           ${{ runner.os }}-
     - run: yarn install --frozen-lockfile
-    - run: yarn build
+    # - run: yarn build
     - run: yarn lint

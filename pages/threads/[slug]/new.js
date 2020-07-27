@@ -32,7 +32,7 @@ const NewThread = (props) => {
   const { data, revalidate, error } = useSWR(() => {
     accessToken = localStorage.getItem('accessToken')
     if (!slug) return
-    return ip + `/api/forum/${slug}`
+    return ip + `/public/forum/${slug}`
   }, (url) => fetch(url, {
     headers: { authorization: accessToken }
   }).then(e => e.status === 200 ? e.json() : { status: e.status }), { initialData: props.forum })
@@ -76,12 +76,14 @@ const NewThread = (props) => {
           url={`/threads/${router.query.slug}/new`}
         />
         <Layout auth={authenticated}>
-          {(authenticated === null || (!data && !error)) && <span>Loading...</span>}
+          {(authenticated === null || (!data && !error && authenticated)) && <span>Loading...</span>}
           {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
-            error) && <span>An unknown error occurred while trying to request.</span>}
-          {data && data.status === 404 && <p>This sub-forum does not exist!</p>}
-          {data && (data.status === 403 || data.status === 401) &&
+            error) && authenticated !== false &&
+              <span>An unknown error occurred while trying to request.</span>}
+          {data && data.status === 404 && authenticated && <p>This sub-forum does not exist!</p>}
+          {data && (data.status === 403 || data.status === 401) && authenticated &&
             <span>You are not allowed to view this sub-forum!</span>}
+          {authenticated === false && <p>You are not permitted to visit this area!</p>}
         </Layout>
       </React.StrictMode>
     )
@@ -159,7 +161,7 @@ NewThread.propTypes = {
 /*
 export async function getServerSideProps (context) {
   const slug = context.params.slug // Remove slug falsy check from main code.
-  const request = await fetch(ip + `/api/forum/${slug}`)
+  const request = await fetch(ip + `/public/forum/${slug}`)
   // Error handling.
   const response = await request.json()
   return { props: { threads: response[0], forum: response[1], slug } }
