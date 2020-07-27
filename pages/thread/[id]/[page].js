@@ -67,6 +67,25 @@ const Thread = (props) => {
     setFetching(false)
   }
 
+  const handleLike = async (postId, like) => {
+    try {
+      setFetching(true)
+      const authorization = localStorage.getItem('accessToken')
+      const request = await fetch(ip + '/api/post/' + postId + (like === 'dislike' ? '/dislike' : '/like'), {
+        method: like ? 'POST' : 'DELETE',
+        headers: { 'content-type': 'application/json', authorization }
+      })
+      if (request.status === 200) {
+        setReplyContent('')
+        await revalidate() // TODO
+      } else setStatusCode(request.status)
+    } catch (e) {
+      setStatusCode(null)
+      console.error(e)
+    }
+    setFetching(false)
+  }
+
   return (
     <React.StrictMode>
       <Title
@@ -84,10 +103,24 @@ const Thread = (props) => {
                 <a href={`#post-${post.id}`} id={`post-${post.id}`}>Post #{index + 1}</a>
                 <br /><br />
                 <span>Author: {post.authorId} | Created On: {new Date(post.createdOn).toString()}</span>
+                <br />
+                <span>Likes: {post.likes} | Dislikes: {post.dislikes}</span>
                 <p>{post.content}</p>
+                {authenticated && (
+                  <>
+                    <button onClick={() => handleLike(post.id, post.liked !== 1)}>
+                      {post.liked === 1 ? 'Remove Like' : 'Like'}
+                    </button> |&#160;
+                    <button onClick={() => handleLike(post.id, post.liked !== -1 && 'dislike')}>
+                      {post.liked === -1 ? 'Remove Dislike' : 'Dislike'}
+                    </button>
+                  </>
+                )}
                 {!!post.lastEdit && (
-                  <div style={{ marginBottom: 10, padding: 2, border: '2px solid black' }}>
-                    Edited on {new Date(post.lastEdit).toString()} | Reason: {post.editReason}
+                  <div style={{ marginTop: 8, marginBottom: 8, padding: 2, border: '2px solid black' }}>
+                    Edited on {new Date(post.lastEdit).toString()}{
+                      post.editorId === post.authorId && ' by ' + post.editorId
+                    } | Reason: {post.editReason}
                   </div>
                 )}
                 <hr />
@@ -95,6 +128,7 @@ const Thread = (props) => {
             ))}
             {authenticated && (
               <>
+                {/* TODO: Rich text editor. */}
                 <textarea value={replyContent} onChange={e => setReplyContent(e.target.value)} />
                 <button onClick={handleReply}>Reply</button>
               </>

@@ -23,7 +23,7 @@ const Register = () => {
   const [password, setPassword] = useState('')
   const [confPass, setConfPass] = useState('')
   const [fetching, setFetching] = useState(false)
-  const [statusCode, setStatusCode] = useState(200) // Expected values: 200, 403, 500
+  const [statusCode, setStatusCode] = useState(200) // Expected values: 200, 403, 409, 500
 
   const invalidName = !username.match(/^[a-zA-Z0-9_]*$/)
 
@@ -38,7 +38,8 @@ const Register = () => {
       })
       if (request.status === 200) {
         router.push('/login')
-      } else setStatusCode(request.status)
+      } else if (request.status === 409) setStatusCode((await request.json()).message)
+      else setStatusCode(request.status)
     } catch (e) {
       setStatusCode(null)
       console.error(e)
@@ -114,8 +115,8 @@ const Register = () => {
           </button>
         </form>
         {invalidName && <p>Only a-z, A-Z, 0-9 and underscores (_) are allowed in the forum slug!</p>}
-        {statusCode === 409 && <p>This username is already taken!</p>}
-        {statusCode !== 200 && statusCode !== 409 && <p>An unknown error occurred while trying to request.</p>}
+        {typeof statusCode === 'string' && <p>{statusCode}</p>}
+        {statusCode !== 200 && typeof statusCode !== 'string' && <p>An unknown error occurred while trying to request.</p>}
         {password !== confPass && <p>The entered passwords do not match!</p>}
         <p>Already have an account?
           <AnchorLink href='/login'>

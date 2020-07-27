@@ -86,7 +86,7 @@ const Login = () => {
           <br /><br />
           <button onClick={handleLogin} disabled={fetching || !username || !password}>Login</button>
         </form>
-        {statusCode === 401 && <p>Unauthorized!</p>}
+        {statusCode === 401 && <p>Invalid username or password!</p>}
         {statusCode !== 200 && statusCode !== 401 && <p>An unknown error occurred while trying to request.</p>}
         <p>Don&apos;t have an account?
           <AnchorLink href='/register'>
