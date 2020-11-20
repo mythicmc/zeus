@@ -72,14 +72,14 @@ const EditForum = () => {
           url={`/forum/${slug}/edit`}
         />
         <Layout auth={authenticated}>
-          {(authenticated === null || (!data && !error && authenticated)) && <span>Loading...</span>}
-          {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
-            error) && authenticated === null &&
-              <span>An unknown error occurred while trying to request.</span>}
-          {data && data.status === 404 && authenticated && <p>This sub-forum does not exist!</p>}
-          {data && (data.status === 403 || data.status === 401) && authenticated !== false &&
-            <span>You are not allowed to view this sub-forum!</span>}
-          {authenticated === false && <p>You are not permitted to visit this area!</p>}
+          {(authenticated === false && <p>You are not permitted to visit this area!</p>) ||
+          ((authenticated === null || (!data && !error && authenticated)) && <p>Loading...</p>) ||
+          (((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
+            error) && // TODO: Fix: authenticated === null &&
+              <p>An unknown error occurred while trying to request.</p>) ||
+          (data && data.status === 404 && authenticated && <p>This sub-forum does not exist!</p>) ||
+          (data && (data.status === 403 || data.status === 401) &&
+            <p>You are not allowed to view this sub-forum!</p>)}
         </Layout>
       </React.StrictMode>
     )

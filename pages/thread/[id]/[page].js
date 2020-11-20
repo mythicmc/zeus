@@ -139,11 +139,10 @@ const Thread = (props) => {
               : statusCode !== null && <p>An unknown error occurred.</p>}
           </>
         )}
-        {!data && !error && <p>Loading...</p>}
-        {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {data && data.status === 404 && <p>This thread does not exist!</p>}
-        {((data && data.status && data.status !== 401 && data.status !== 403 && data.status !== 404) ||
-          error) && <p>An unknown error occurred.</p>}
+        {(!data && !error && <p>Loading...</p>) ||
+        (data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>) ||
+        (data && data.status === 404 && <p>This thread does not exist!</p>) ||
+        (((data && data.status) || error) && <p>An unknown error occurred.</p>)}
       </Layout>
     </React.StrictMode>
   )

@@ -41,9 +41,9 @@ const Profile = (props) => {
             <p>Joined the forums on {new Date(data.createdOn).toString()}</p>
           </>
         )}
-        {!data && !error && <p>Loading...</p>}
-        {data && data.status === 404 && <p>No member exists with this username!</p>}
-        {((data && data.status && data.status !== 404) || error) && <p>An unknown error occurred.</p>}
+        {(!data && !error && <p>Loading...</p>) ||
+        (data && data.status === 404 && <p>No member exists with this username!</p>) ||
+        (((data && data.status) || error) && <p>An unknown error occurred.</p>)}
       </Layout>
     </React.StrictMode>
   )

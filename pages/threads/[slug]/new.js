@@ -52,7 +52,7 @@ const NewThread = (props) => {
         method: 'POST',
         headers: { 'content-type': 'application/json', authorization },
         body: JSON.stringify(
-          { title, content, parentForumId: data.id, pinned, closed }
+          { title, content, parentForumId: data.id || data.slug, pinned, closed }
         )
       })
       if (request.status === 200) {

@@ -19,7 +19,7 @@ const useAuthentication = () => {
 
   useEffect(() => {
     (async () => {
-      if (data && !data.status && data.id) setAuthenticated(data)
+      if (data && !data.status && data.name) setAuthenticated(data)
       else if (data && (data.status === 401 || data.status === 403)) {
         let refreshToken
         try { refreshToken = localStorage.getItem('refreshToken') } catch (e) { return }

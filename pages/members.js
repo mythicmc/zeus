@@ -41,10 +41,9 @@ const Members = (props) => {
             <hr />
           </div>
         ))}
-        {!data && !error && <p>Loading...</p>}
-        {data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>}
-        {((data && data.status && data.status !== 401 && data.status !== 403) || error) &&
-          <p>An unknown error occurred.</p>}
+        {(!data && !error && <p>Loading...</p>) ||
+        (data && (data.status === 401 || data.status === 403) && <p>You are not logged in!</p>) ||
+        (((data && data.status) || error) && <p>An unknown error occurred.</p>)}
       </Layout>
     </React.StrictMode>
   )

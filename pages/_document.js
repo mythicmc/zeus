@@ -20,7 +20,7 @@ class MyDocument extends Document {
           <meta name='theme-color' content='#34644c' />
           {/* Open Graph Protocol support. */}
           <meta property='og:type' content='website' />
-          <meta property='og:image' content={icon} /> {/* TODO: Need to check. */}
+          <meta property='og:image' content={icon} />
           <link
             rel='stylesheet'
             href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'

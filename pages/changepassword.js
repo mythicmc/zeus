@@ -45,9 +45,7 @@ const ChangePassword = () => {
           url='/changepassword'
         />
         <Layout auth={authenticated}>
-          {authenticated === null
-            ? <p>Loading...</p>
-            : <p>You are not logged in!</p>}
+          <p>{authenticated === null ? 'Loading...' : 'You are not logged in!'}</p>
         </Layout>
       </React.StrictMode>
     )
@@ -107,10 +105,9 @@ const ChangePassword = () => {
           </button>
         </form>
         {newPassword !== newPassConfirm && <p>The entered passwords do not match!</p>}
-        {statusCode === 401 && <p>Unauthorized!</p>}
-        {statusCode === 403 && <p>The password you entered was incorrect!</p>}
-        {statusCode !== 200 && statusCode !== 401 && statusCode !== 403 &&
-          <p>An unknown error occurred while trying to request.</p>}
+        {(statusCode === 401 && <p>Unauthorized!</p>) ||
+        (statusCode === 403 && <p>The password you entered was incorrect!</p>) ||
+        (statusCode !== 200 && <p>An unknown error occurred while trying to request.</p>)}
       </Layout>
     </React.StrictMode>
   )
