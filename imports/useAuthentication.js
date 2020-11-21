@@ -1,4 +1,3 @@
-import fetch from 'isomorphic-unfetch'
 import useSWR from 'swr'
 import { ip } from '../config.json'
 import { useState, useEffect } from 'react'

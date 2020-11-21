@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/router'
-import fetch from 'isomorphic-unfetch'
 import Title from '../imports/title'
 import Layout from '../imports/layout'
 import AnchorLink from '../imports/anchorLink'

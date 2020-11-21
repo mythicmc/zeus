@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
-import fetch from 'isomorphic-unfetch'
 import AnchorLink from './anchorLink'
 import { ip } from '../config.json'
 

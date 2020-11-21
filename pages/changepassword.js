@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react'
-import fetch from 'isomorphic-unfetch'
 import Title from '../imports/title'
 import Layout from '../imports/layout'
 import useAuthentication from '../imports/useAuthentication'

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
-import fetch from 'isomorphic-unfetch'
 import useSWR from 'swr'
 import Title from '../../../imports/title'
 import Layout from '../../../imports/layout'
