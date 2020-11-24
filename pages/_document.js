@@ -1,21 +1,15 @@
 import React from 'react'
-import Document, { Head, Main, NextScript } from 'next/document'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 const icon = '/assets/icon.png'
 
 class MyDocument extends Document {
   render () {
     return (
-      <html lang='en' dir='ltr'>
+      <Html lang='en' dir='ltr'>
         <Head>
           <link rel='icon' href={icon} />
           <meta charSet='utf-8' />
-          {/* Use minimum-scale=1 to enable GPU rasterization */}
-          <meta
-            name='viewport'
-            content='user-scalable=0, initial-scale=1,
-            minimum-scale=1, width=device-width, height=device-height'
-          />
           {/* PWA primary color */}
           <meta name='theme-color' content='#34644c' />
           {/* Open Graph Protocol support. */}
@@ -30,7 +24,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }

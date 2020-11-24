@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import useSWR from 'swr'
+import unified from 'unified'
+import gfm from 'remark-gfm'
+import parse from 'remark-parse'
+import remark2react from 'remark-react'
 import Title from '../../../imports/title'
 import Layout from '../../../imports/layout'
 import useAuthentication from '../../../imports/useAuthentication'
@@ -12,8 +16,20 @@ import { ip } from '../../../config.json'
  * @param {string} title The title of the thread to convert to a slug.
  */
 const titleToSlug = title => title.toLowerCase().substring(0, 20).replace(' ', '-')
+const MarkdownImage = (props) => {
+  const obj = {}
+  if (/=(\d+x\d*|\d*x\d+)$/.test(props.src)) {
+    const split = props.src.split('=')
+    const size = split.pop().split('x')
+    obj.src = split.join('=')
+    if (size[0] && !isNaN(+size[0])) obj.height = +size[0]
+    if (size[1] && !isNaN(+size[1])) obj.width = +size[1]
+  }
+  return <img {...props} {...obj} />
+}
+MarkdownImage.propTypes = { src: PropTypes.string.isRequired }
 
-// TODO: /page-number and BBCode parsing. Rich text editor.
+// TODO: /page-number and rich text editor.
 const Thread = (props) => {
   const router = useRouter()
   const authenticated = useAuthentication()
@@ -97,34 +113,48 @@ const Thread = (props) => {
         {data && Array.isArray(data.posts) && (
           <>
             <hr />
-            {data.posts.sort((a, b) => a.createdOn - b.createdOn).map((post, index) => (
-              <div key={post.id}>
-                <a href={`#post-${post.id}`} id={`post-${post.id}`}>Post #{index + 1}</a>
-                <br /><br />
-                <span>Author: {post.authorId} | Created On: {new Date(post.createdOn).toString()}</span>
-                <br />
-                <span>Likes: {post.likes} | Dislikes: {post.dislikes}</span>
-                <p>{post.content}</p>
-                {authenticated && (
-                  <>
-                    <button onClick={() => handleLike(post.id, post.liked !== 1)}>
-                      {post.liked === 1 ? 'Remove Like' : 'Like'}
-                    </button> |&#160;
-                    <button onClick={() => handleLike(post.id, post.liked !== -1 && 'dislike')}>
-                      {post.liked === -1 ? 'Remove Dislike' : 'Dislike'}
-                    </button>
-                  </>
-                )}
-                {!!post.lastEdit && (
-                  <div style={{ marginTop: 8, marginBottom: 8, padding: 2, border: '2px solid black' }}>
-                    Edited on {new Date(post.lastEdit).toString()}{
-                      post.editorId === post.authorId && ' by ' + post.editorId
-                    } | Reason: {post.editReason}
-                  </div>
-                )}
-                <hr />
-              </div>
-            ))}
+            {data.posts.sort((a, b) => a.createdOn - b.createdOn).map((post, index) => {
+              // Retain compatibility with both Gaia and Hera.
+              const likes = (Array.isArray(post.likes) ? post.likes.length : post.likes) || 0
+              const liked = (authenticated && post.likes && post.likes.includes(authenticated.name)) ||
+              post.liked === 1
+              const dislikes = (Array.isArray(post.dislikes) ? post.dislikes.length : post.dislikes) || 0
+              const disliked = (authenticated && post.dislikes && post.dislikes.includes(authenticated.name)) ||
+              post.liked === -1
+
+              const markdown = unified().use(parse).use(gfm).use(remark2react, {
+                remarkReactComponents: { img: MarkdownImage }
+              }).processSync(post.content).result
+
+              return (
+                <div key={post.id}>
+                  <a href={`#post-${post.id}`} id={`post-${post.id}`}>Post #{index + 1}</a>
+                  <br /><br />
+                  <span>Author: {post.authorId} | Created On: {new Date(post.createdOn).toString()}</span>
+                  <br />
+                  <span>Likes: {likes} | Dislikes: {dislikes}</span>
+                  <div>{markdown}</div>
+                  {authenticated && (
+                    <>
+                      <button onClick={() => handleLike(post.id, !liked)}>
+                        {liked ? 'Remove Like' : 'Like'}
+                      </button> |&#160;
+                      <button onClick={() => handleLike(post.id, !disliked && 'dislike')}>
+                        {disliked ? 'Remove Dislike' : 'Dislike'}
+                      </button>
+                    </>
+                  )}
+                  {!!post.lastEdit && (
+                    <div style={{ marginTop: 8, marginBottom: 8, padding: 2, border: '2px solid black' }}>
+                      Edited on {new Date(post.lastEdit).toString()}{
+                        post.editorId === post.authorId && ' by ' + post.editorId
+                      } | Reason: {post.editReason}
+                    </div>
+                  )}
+                  <hr />
+                </div>
+              )
+            })}
             {authenticated && (
               <>
                 {/* TODO: Rich text editor. */}

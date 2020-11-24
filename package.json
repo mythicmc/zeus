@@ -13,10 +13,15 @@
     "lint": "eslint . --ignore-pattern *.d.ts"
   },
   "dependencies": {
+    "draft-js": "^0.11.7",
     "next": "^10.0.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "swr": "^0.3.9"
+    "remark-gfm": "^1.0.0",
+    "remark-parse": "^9.0.0",
+    "remark-react": "^8.0.0",
+    "swr": "^0.3.9",
+    "unified": "^9.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.5",
